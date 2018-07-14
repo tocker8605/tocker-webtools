@@ -1,0 +1,26 @@
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compileOnly("org.projectlombok:lombok:1.18.0")
+        compileOnly('ch.qos.logback:logback-classic:1.2.3')
+
+        testCompileOnly("org.projectlombok:lombok:1.18.0")
+        testCompile('junit:junit:4.12')
+        testCompile('org.spockframework:spock-core:1.1-groovy-2.4')
+    }
+
+}
+
+project(':sandbox') {
+    dependencies {
+        compile project(':web')
+    }
+}
