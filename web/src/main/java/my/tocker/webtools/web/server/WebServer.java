@@ -26,6 +26,8 @@ public class WebServer {
             while ((connection = listenSocket.accept()) != null) {
                 // todo: do anything
 
+                RequestHandler requestHandler = new RequestHandler(connection);
+                requestHandler.start();
             }
         }
         catch (Exception ex) {
