@@ -14,12 +14,12 @@ import java.util.Set;
 @Slf4j
 public class HttpResponse {
 
-    private DataOutputStream dos;
+    private DataOutputStream dataOutputStream;
 
     private Map<String, String> headers = new HashMap<>();
 
     public HttpResponse(OutputStream out) {
-        dos = new DataOutputStream(out);
+        dataOutputStream = new DataOutputStream(out);
     }
 
     public void addHeader(String key, String value) {
@@ -31,16 +31,20 @@ public class HttpResponse {
             byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
             if (url.endsWith(".css")) {
                 headers.put("Content-Type", "text/css");
-            } else if (url.endsWith(".js")) {
+            }
+            else if (url.endsWith(".js")) {
                 headers.put("Content-Type", "application/javascript");
-            } else {
+            }
+            else {
                 headers.put("Content-Type", "text/html;charset=utf-8");
             }
             headers.put("Content-Length", body.length + "");
             response200Header(body.length);
             responseBody(body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
+            flushResponse();
+        }
+        catch (IOException ex) {
+            log.error(ex.getMessage());
         }
     }
 
@@ -50,36 +54,48 @@ public class HttpResponse {
         headers.put("Content-Length", contents.length + "");
         response200Header(contents.length);
         responseBody(contents);
+        flushResponse();
     }
 
     private void response200Header(int lengthOfBodyContent) {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
+            dataOutputStream.writeBytes("HTTP/1.1 200 OK \r\n");
             processHeaders();
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
+            dataOutputStream.writeBytes("\r\n");
+        }
+        catch (IOException ex) {
+            log.error(ex.getMessage());
         }
     }
 
     private void responseBody(byte[] body) {
         try {
-            dos.write(body, 0, body.length);
-            dos.writeBytes("\r\n");
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
+            dataOutputStream.write(body, 0, body.length);
+            dataOutputStream.writeBytes("\r\n");
+        }
+        catch (IOException ex) {
+            log.error(ex.getMessage());
         }
     }
 
     public void sendRedirect(String redirectUrl) {
         try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
+            dataOutputStream.writeBytes("HTTP/1.1 302 Found \r\n");
             processHeaders();
-            dos.writeBytes("Location: " + redirectUrl + " \r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            log.error(e.getMessage());
+            dataOutputStream.writeBytes("Location: " + redirectUrl + " \r\n");
+            dataOutputStream.writeBytes("\r\n");
+        }
+        catch (IOException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
+    private void flushResponse() {
+        try {
+            dataOutputStream.flush();
+        }
+        catch (IOException ex) {
+            log.error(ex.getMessage());
         }
     }
 
@@ -87,10 +103,11 @@ public class HttpResponse {
         try {
             Set<String> keys = headers.keySet();
             for (String key : keys) {
-                dos.writeBytes(key + ": " + headers.get(key) + " \r\n");
+                dataOutputStream.writeBytes(key + ": " + headers.get(key) + " \r\n");
             }
-        } catch (IOException e) {
-            log.error(e.getMessage());
+        }
+        catch (IOException ex) {
+            log.error(ex.getMessage());
         }
     }
 }

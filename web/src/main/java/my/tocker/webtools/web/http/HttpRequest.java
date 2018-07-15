@@ -32,7 +32,7 @@ public class HttpRequest {
 
             requestLine = new RequestLine(line);
 
-            while(!line.equals("")) {
+            while (!line.equals("")) {
                 line = br.readLine();
                 log.debug("header : {}", line);
                 if (!line.equals("")){
@@ -44,7 +44,8 @@ public class HttpRequest {
             if (requestLine.isPost()) {
                 String body = IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
                 params = HttpRequestUtils.parseQueryString(body);
-            } else {
+            }
+            else {
                 params = requestLine.getParams();
             }
         } catch (IOException io) {
@@ -73,6 +74,6 @@ public class HttpRequest {
     }
 
     public HttpSession getSession() {
-        return HttpSessions.getSession(getCookies().getCookie("JSESSIONID"));
+        return HttpSessions.getSession(getCookies().getCookie(HttpSessions.SESSION_ID_NAME));
     }
 }

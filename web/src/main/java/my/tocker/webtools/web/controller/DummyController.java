@@ -7,6 +7,6 @@ public class DummyController extends AbstractController{
 
     @Override
     public void doGet(HttpRequest request, HttpResponse response) {
-        response.sendRedirect("/index.html");
+        response.forward("/index.html");
     }
 }

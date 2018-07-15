@@ -29,19 +29,23 @@ public class RequestHandler extends Thread {
             HttpRequest request = new HttpRequest(in);
             HttpResponse response = new HttpResponse(out);
 
+            // session cookie set
             if (request.getCookies().getCookie(HttpSessions.SESSION_ID_NAME) == null) {
                 response.addHeader("Set-Cookie", HttpSessions.SESSION_ID_NAME + "=" + UUID.randomUUID());
             }
 
+            // controller matching
             Controller controller = RequestMapping.getController(request.getPath());
+
             if (controller == null) {
                 String path = getDefaultPath(request.getPath());
                 response.forward(path);
-            } else {
+            }
+            else {
                 controller.service(request, response);
             }
-        } catch (IOException e) {
-            log.error(e.getMessage());
+        } catch (IOException ex) {
+            log.error(ex.getMessage());
         }
     }
 

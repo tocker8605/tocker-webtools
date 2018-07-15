@@ -32,7 +32,8 @@ public class RequestLine {
         if (index == -1) {
             path = tokens[1];
             params = new HashMap<>();
-        } else {
+        }
+        else {
             path = tokens[1].substring(0, index);
             params = HttpRequestUtils.parseQueryString(tokens[1].substring(index+1));
         }
