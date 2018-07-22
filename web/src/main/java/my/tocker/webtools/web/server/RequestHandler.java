@@ -49,6 +49,7 @@ public class RequestHandler extends Thread {
         }
     }
 
+    // TODO: auto config화
     private String getDefaultPath(String path) {
         if (path.equals("/")) {
             return "/index.html";

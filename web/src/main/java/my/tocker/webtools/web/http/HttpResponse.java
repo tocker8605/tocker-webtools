@@ -29,6 +29,8 @@ public class HttpResponse {
     public void forward(String url) {
         try {
             byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
+
+            // TODO: refact...
             if (url.endsWith(".css")) {
                 headers.put("Content-Type", "text/css");
             }
@@ -55,6 +57,12 @@ public class HttpResponse {
         response200Header(contents.length);
         responseBody(contents);
         flushResponse();
+    }
+
+    public void template(String url, Object data) {
+        // TODO: template engine.
+
+        // forwardBody();
     }
 
     private void response200Header(int lengthOfBodyContent) {
